@@ -7,16 +7,16 @@ from hparams import hparams
 
 
 def preprocess_blizzard(args):
-  in_dir = os.path.join(args.base_dir, 'Blizzard2012')
-  out_dir = os.path.join(args.base_dir, args.output)
+  in_dir = args.datadir
+  out_dir = args.outdir
   os.makedirs(out_dir, exist_ok=True)
   metadata = blizzard.build_from_path(in_dir, out_dir, args.num_workers, tqdm=tqdm)
   write_metadata(metadata, out_dir)
 
 
 def preprocess_ljspeech(args):
-  in_dir = os.path.join(args.base_dir, 'LJSpeech-1.1')
-  out_dir = os.path.join(args.base_dir, args.output)
+  in_dir = args.datadir
+  out_dir = args.outdir
   os.makedirs(out_dir, exist_ok=True)
   metadata = ljspeech.build_from_path(in_dir, out_dir, args.num_workers, tqdm=tqdm)
   write_metadata(metadata, out_dir)
@@ -35,9 +35,9 @@ def write_metadata(metadata, out_dir):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--base_dir', default=os.path.expanduser('~/tacotron'))
-  parser.add_argument('--output', default='training')
-  parser.add_argument('--dataset', required=True, choices=['blizzard', 'ljspeech'])
+  parser.add_argument('--datadir', default='', help='Filepath to input dataset')
+  parser.add_argument('--outdir', default='', help='Filepath to write mel and linear spectrograms')
+  parser.add_argument('--dataset', required=True, choices=['blizzard', 'ljspeech'], help='Dataset format either follows LJSpeech or Blizzard2012 format.')
   parser.add_argument('--num_workers', type=int, default=cpu_count())
   args = parser.parse_args()
   if args.dataset == 'blizzard':

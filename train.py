@@ -45,7 +45,7 @@ def time_string():
 def train(log_dir, args):
   commit = get_git_commit() if args.git else 'None'
   checkpoint_path = os.path.join(log_dir, 'model.ckpt')
-  input_path = os.path.join(args.base_dir, args.input)
+  input_path = args.trainingfile
   log('Checkpoint path: %s' % checkpoint_path)
   log('Loading training data from: %s' % input_path)
   log('Using model: %s' % args.model)
@@ -87,7 +87,7 @@ def train(log_dir, args):
 
       feeder.start_in_session(sess)
 
-      while not coord.should_stop():
+      while not coord.should_stop() and step < args.max_train_steps:
         start_time = time.time()
         step, loss, opt = sess.run([global_step, model.loss, model.optimize])
         time_window.append(time.time() - start_time)
@@ -111,6 +111,7 @@ def train(log_dir, args):
           input_seq, spectrogram, alignment = sess.run([
             model.inputs[0], model.linear_outputs[0], model.alignments[0]])
           waveform = audio.inv_spectrogram(spectrogram.T)
+          # Save a waveform every checkpoint
           audio.save_wav(waveform, os.path.join(log_dir, 'step-%d-audio.wav' % step))
           plot.plot_alignment(alignment, os.path.join(log_dir, 'step-%d-align.png' % step),
             info='%s, %s, %s, step=%d, loss=%.5f' % (args.model, commit, time_string(), step, loss))
@@ -124,13 +125,15 @@ def train(log_dir, args):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--base_dir', default=os.path.expanduser('~/tacotron'))
-  parser.add_argument('--input', default='training/train.txt')
+  parser.add_argument('--trainingfile', default='training/train.txt')
   parser.add_argument('--model', default='tacotron')
-  parser.add_argument('--name', help='Name of the run. Used for logging. Defaults to model name.')
+  parser.add_argument('--jobname', default='', help='Name of the run. Used for logging. Defaults to model name.')
+  parser.add_argument('--outdir', default='output', help='Output directory for log files and models. Will create a folder inside this directory named after the current job, or if no jobname is provided, will use the model.')
   parser.add_argument('--hparams', default='',
     help='Hyperparameter overrides as a comma-separated list of name=value pairs')
   parser.add_argument('--restore_step', type=int, help='Global step to restore from checkpoint.')
+  parser.add_argument('--max_train_steps', type=int, default=100000, help='Maximum number of training steps.')
+
   parser.add_argument('--summary_interval', type=int, default=100,
     help='Steps between running summary ops.')
   parser.add_argument('--checkpoint_interval', type=int, default=1000,
@@ -139,9 +142,10 @@ def main():
   parser.add_argument('--tf_log_level', type=int, default=1, help='Tensorflow C++ log level.')
   parser.add_argument('--git', action='store_true', help='If set, verify that the client is clean.')
   args = parser.parse_args()
+
   os.environ['TF_CPP_MIN_LOG_LEVEL'] = str(args.tf_log_level)
-  run_name = args.name or args.model
-  log_dir = os.path.join(args.base_dir, 'logs-%s' % run_name)
+  run_name = args.jobname or args.model
+  log_dir = os.path.join(args.outdir, 'logs-%s' % run_name)
   os.makedirs(log_dir, exist_ok=True)
   infolog.init(os.path.join(log_dir, 'train.log'), run_name, args.slack_url)
   hparams.parse(args.hparams)

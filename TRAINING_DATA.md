@@ -15,8 +15,7 @@ Each training example consists of:
   2. A mel-scale spectrogram of the audio
   3. A linear-scale spectrogram of the audio
 
-The preprocessor is responsible for generating these. See [ljspeech.py](datasets/ljspeech.py) for a
-commented example.
+The preprocessor is responsible for generating these. See [ljspeech.py](datasets/ljspeech.py) for a commented example.
 
 For each training example, a preprocessor should:
 
