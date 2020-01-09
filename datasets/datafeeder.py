@@ -7,7 +7,8 @@ import time
 import traceback
 from text import cmudict, text_to_sequence
 from util.infolog import log
-
+import io
+from tensorflow.python.lib.io import file_io
 
 _batches_per_group = 32
 _p_cmudict = 0.5
@@ -17,19 +18,27 @@ _pad = 0
 class DataFeeder(threading.Thread):
   '''Feeds batches of data into a queue on a background thread.'''
 
-  def __init__(self, coordinator, metadata_filename, hparams):
+  def __init__(self, coordinator, metadata_filename, hparams, args):
     super(DataFeeder, self).__init__()
     self._coord = coordinator
     self._hparams = hparams
+    self._batch_size = args.batch_size
     self._cleaner_names = [x.strip() for x in hparams.cleaners.split(',')]
     self._offset = 0
 
     # Load metadata:
     self._datadir = os.path.dirname(metadata_filename)
-    with open(metadata_filename, encoding='utf-8') as f:
+    log("//------------------------------")
+    log("Loading training metadata from {}".format(metadata_filename))
+    log("---------------------------")
+
+    #with open(metadata_filename, encoding='utf-8') as f:
+    with tf.gfile.Open(metadata_filename) as f:
       self._metadata = [line.strip().split('|') for line in f]
       hours = sum((int(x[2]) for x in self._metadata)) * hparams.frame_shift_ms / (3600 * 1000)
-      log('Loaded metadata for %d examples (%.2f hours)' % (len(self._metadata), hours))
+      log('Loaded metadata for %d examples (%.2f hours of speech)' % (len(self._metadata), hours))
+      log("------------------------------//")
+
 
     # Create placeholders for inputs and targets. Don't specify batch size because we want to
     # be able to feed different sized batches at eval time.
@@ -81,7 +90,7 @@ class DataFeeder(threading.Thread):
     start = time.time()
 
     # Read a group of examples:
-    n = self._hparams.batch_size
+    n = self._batch_size
     r = self._hparams.outputs_per_step
     examples = [self._get_next_example() for i in range(n * _batches_per_group)]
 
@@ -109,8 +118,12 @@ class DataFeeder(threading.Thread):
       text = ' '.join([self._maybe_get_arpabet(word) for word in text.split(' ')])
 
     input_data = np.asarray(text_to_sequence(text, self._cleaner_names), dtype=np.int32)
-    linear_target = np.load(os.path.join(self._datadir, meta[0]))
-    mel_target = np.load(os.path.join(self._datadir, meta[1]))
+
+    lin_file = os.path.join(self._datadir, meta[0])
+    mel_file = os.path.join(self._datadir, meta[1])
+    #log("LOADING: {} AND {}".format(meta[0], meta[1]))
+    linear_target = np.load(io.BytesIO(file_io.read_file_to_string(lin_file, binary_mode=True)))
+    mel_target = np.load(io.BytesIO(file_io.read_file_to_string(mel_file, binary_mode=True)))
     return (input_data, mel_target, linear_target, len(linear_target))
 
 

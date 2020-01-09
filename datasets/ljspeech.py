@@ -1,6 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 import numpy as np
+import tensorflow as tf
 import os
 from util import audio
 
@@ -24,6 +25,7 @@ def build_from_path(in_dir, out_dir, num_workers=1, tqdm=lambda x: x):
   futures = []
   index = 1
   with open(os.path.join(in_dir, 'metadata.csv'), encoding='utf-8') as f:
+  #with tf.gfile.Open(os.path.join(in_dir, 'metadata.csv')) as f:
     for line in f:
       parts = line.strip().split('|')
       wav_path = os.path.join(in_dir, 'wavs', '%s.wav' % parts[0])
@@ -59,11 +61,16 @@ def _process_utterance(out_dir, index, wav_path, text):
   # Compute a mel-scale spectrogram from the wav:
   mel_spectrogram = audio.melspectrogram(wav).astype(np.float32)
 
+
+
   # Write the spectrograms to disk:
   spectrogram_filename = 'ljspeech-spec-%05d.npy' % index
   mel_filename = 'ljspeech-mel-%05d.npy' % index
-  np.save(os.path.join(out_dir, spectrogram_filename), spectrogram.T, allow_pickle=False)
-  np.save(os.path.join(out_dir, mel_filename), mel_spectrogram.T, allow_pickle=False)
+  spectrogram_outfile = os.path.join(out_dir, spectrogram_filename)
+  mel_outfile = os.path.join(out_dir, mel_filename)
+
+  np.save(spectrogram_outfile, spectrogram.T, allow_pickle=False)
+  np.save(mel_outfile, mel_spectrogram.T, allow_pickle=False)
 
   # Return a tuple describing this training example:
   return (spectrogram_filename, mel_filename, n_frames, text)

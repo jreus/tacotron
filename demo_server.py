@@ -1,9 +1,10 @@
 import argparse
 import falcon
-from hparams import hparams, hparams_debug_string
+from trainer.hparams import hparams, hparams_debug_string
 import os
+from util import infolog
 from synthesizer import Synthesizer
-
+log = infolog.log
 
 html_body = '''<html><title>Demo</title>
 <style>
@@ -82,10 +83,13 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--checkpoint', required=True, help='Full path to model checkpoint')
   parser.add_argument('--port', type=int, default=9000)
+  parser.add_argument('--logdir', default="")
+  parser.add_argument('--slack-url', default="")
   parser.add_argument('--hparams', default='',
     help='Hyperparameter overrides as a comma-separated list of name=value pairs')
   args = parser.parse_args()
   os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+  infolog.init(os.path.join(args.logdir, 'server.log'), "serverlog", args.slack_url)
   hparams.parse(args.hparams)
   print(hparams_debug_string())
   synthesizer.load(args.checkpoint)

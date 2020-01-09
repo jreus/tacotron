@@ -1,7 +1,7 @@
 import io
 import numpy as np
 import tensorflow as tf
-from hparams import hparams
+from trainer.hparams import hparams
 from librosa import effects
 from models import create_model
 from text import text_to_sequence

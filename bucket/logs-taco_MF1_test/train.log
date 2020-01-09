@@ -1,0 +1,77 @@
+[2020-01-05 13:30:14.267]  
+-----------------------------------------------------------------
+
+[2020-01-05 13:30:14.267]  INIT LOG
+
+[2020-01-05 13:30:14.267]  -----------------------------------------------------------------
+
+[2020-01-05 13:30:14.267]  Writing logs and checkpoints to: bucket/logs-taco_MF1_test/
+[2020-01-05 13:30:14.267]  Loading training data from: ../datasets/MF1/tacotron/train.txt
+[2020-01-05 13:30:14.267]  Using model: tacotron
+[2020-01-05 13:30:14.267]  Hyperparameters:
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  attention_depth: 256
+  cleaners: english_cleaners
+  decay_learning_rate: True
+  decoder_depth: 256
+  embed_depth: 256
+  encoder_depth: 256
+  frame_length_ms: 50
+  frame_shift_ms: 12.5
+  griffin_lim_iters: 60
+  initial_learning_rate: 0.002
+  max_iters: 200
+  min_level_db: -100
+  num_freq: 1025
+  num_mels: 80
+  outputs_per_step: 5
+  postnet_depth: 256
+  power: 1.5
+  preemphasis: 0.97
+  prenet_depths: [256, 128]
+  ref_level_db: 20
+  sample_rate: 22050
+  use_cmudict: False
+[2020-01-05 13:30:14.269]  //------------------------------
+[2020-01-05 13:30:14.269]  Loading training metadata from ../datasets/MF1/tacotron/train.txt
+[2020-01-05 13:30:14.269]  ---------------------------
+[2020-01-05 13:30:14.272]  Loaded metadata for 378 examples (0.43 hours of speech)
+[2020-01-05 13:30:14.272]  ------------------------------//
+[2020-01-05 13:30:14.277]  //----------------------------------------
+[2020-01-05 13:30:14.277]  BUILDING MODEL...
+[2020-01-05 13:30:14.277]  ------------------------------------------
+[2020-01-05 13:30:16.976]  Initialized Tacotron model. Dimensions: 
+[2020-01-05 13:30:16.976]    embedding:               256
+[2020-01-05 13:30:16.976]    prenet out:              128
+[2020-01-05 13:30:16.976]    encoder out:             256
+[2020-01-05 13:30:16.976]    attention out:           256
+[2020-01-05 13:30:16.976]    concat attn & out:       512
+[2020-01-05 13:30:16.976]    decoder cell out:        256
+[2020-01-05 13:30:16.976]    decoder out (5 frames):  400
+[2020-01-05 13:30:16.976]    decoder out (1 frame):   80
+[2020-01-05 13:30:16.976]    postnet out:             256
+[2020-01-05 13:30:16.976]    linear out:              1025
+[2020-01-05 13:30:24.989]  //-----------------------------------------
+[2020-01-05 13:30:24.989]  BEGIN TRAINING... STEP 0
+[2020-01-05 13:30:24.990]  -------------------------------------------
+[2020-01-05 13:30:29.156]  Starting new training run at commit: None
+[2020-01-05 13:30:35.258]  Generated 32 batches of size 64 in 6.102 sec
+[2020-01-05 13:30:50.408]  Step 1       [21.251 sec/step, loss=0.77352, avg_loss=0.77352]
+[2020-01-05 13:30:58.045]  Step 2       [14.444 sec/step, loss=0.79250, avg_loss=0.78301]
+[2020-01-05 13:31:02.470]  Step 3       [11.104 sec/step, loss=0.78239, avg_loss=0.78280]
+[2020-01-05 13:31:05.564]  Step 4       [9.102 sec/step, loss=0.70309, avg_loss=0.76287]
+[2020-01-05 13:31:09.555]  Step 5       [8.079 sec/step, loss=0.76575, avg_loss=0.76345]
+[2020-01-05 13:31:09.555]  Writing summary at step: 5
+[2020-01-05 13:31:16.785]  Saving checkpoint to: bucket/logs-taco_MF1_test/model.ckpt
+[2020-01-05 13:31:18.912]  Saving audio and alignment...
+[2020-01-05 13:31:23.924]  Input: many of my pieces i wrote almost~_______________________
+[2020-01-05 13:31:29.682]  Step 6       [7.693 sec/step, loss=0.79553, avg_loss=0.76879]
+[2020-01-05 13:31:30.906]  Step 7       [6.768 sec/step, loss=0.55952, avg_loss=0.73890]
+[2020-01-05 13:31:32.870]  Step 8       [6.168 sec/step, loss=0.68883, avg_loss=0.73264]
+[2020-01-05 13:31:49.011]  Step 9       [7.276 sec/step, loss=0.76970, avg_loss=0.73676]
+[2020-01-05 13:31:53.717]  Step 10      [7.019 sec/step, loss=0.74794, avg_loss=0.73788]
+[2020-01-05 13:31:53.717]  Writing summary at step: 10
+[2020-01-05 13:31:57.938]  Saving checkpoint to: bucket/logs-taco_MF1_test/model.ckpt
+[2020-01-05 13:31:59.555]  Saving audio and alignment...
+[2020-01-05 13:32:03.661]  Input: well you know its like camp when~________________________________________
