@@ -36,5 +36,5 @@ class Synthesizer:
     wav = audio.inv_preemphasis(wav)
     wav = wav[:audio.find_endpoint(wav)]
     out = io.BytesIO()
-    audio.save_wav(wav, out)
+    audio.save_wav(wav, out) # wav data is written to an empty Bytes object rather than a filepath
     return out.getvalue()
