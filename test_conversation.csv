@@ -1,0 +1,10 @@
+speaker|model|text
+beckett|sb2/model.ckpt-96000|Morton Feldman was a crucial figure
+beckett|sb1/model.ckpt-46000|in the post war New York art world
+feldman|mf1/batch64/model.ckpt-20000|I first met Samuel Beckett
+feldman|mf1/batch32/model.ckpt-38000|in the Royal Court Theatre in London
+beckett|sb1/model.ckpt-46000|using elements of chance composition
+beckett|sb1/model.ckpt-46000|to construct exquisite
+beckett|sb1/model.ckpt-46000|quietly powerful scores
+feldman|mf1/batch32/model.ckpt-38000|I knew this was an important technical rehearsal
+feldman|mf1/batch32/model.ckpt-38000|and I was lucky to be there
